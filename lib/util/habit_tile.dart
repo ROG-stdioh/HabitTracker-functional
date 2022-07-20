@@ -21,6 +21,29 @@ class HabitTile extends StatelessWidget {
     required this.habitStarted,
   }) : super(key: key);
 
+  // convert seconds into min:sec
+  String formatToMinSec(int totalSeconds) {
+    String secs = (totalSeconds % 60).toString();
+    String mins = (totalSeconds / 60).toStringAsFixed(5);
+
+    // if secs is a 1 digit number, place a 0 in front
+    if (secs.length == 1) {
+      secs = '0' + secs;
+    }
+
+    // if mins is a 1 digit number
+    if (mins[1] == '.') {
+      mins = mins.substring(0, 1);
+    }
+
+    return mins + ': ' + secs;
+  }
+
+  // calculate progress percentage
+  double percentageCompleted() {
+    return timeSpent / (timeGoal * 60);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -49,6 +72,14 @@ class HabitTile extends StatelessWidget {
                       children: [
                         CircularPercentIndicator(
                           radius: 60,
+                          percent: percentageCompleted() < 1
+                              ? percentageCompleted()
+                              : 1,
+                          progressColor: percentageCompleted() > 0.5
+                              ? (percentageCompleted() > 0.75
+                                  ? Colors.green
+                                  : Colors.orange)
+                              : Colors.red,
                         ),
 
                         //play pause button
@@ -81,7 +112,12 @@ class HabitTile extends StatelessWidget {
 
                     //progress
                     Text(
-                      timeSpent.toString() + ' / ' + timeGoal.toString(),
+                      formatToMinSec(timeSpent) +
+                          ' / ' +
+                          timeGoal.toString() +
+                          ' = ' +
+                          (percentageCompleted() * 100).toStringAsFixed(0) +
+                          '%',
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
