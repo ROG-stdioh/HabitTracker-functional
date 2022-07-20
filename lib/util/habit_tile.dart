@@ -1,10 +1,25 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class HabitTile extends StatelessWidget {
   final String habitName;
+  final VoidCallback onTap;
+  final VoidCallback settingsTapped;
+  final int timeSpent;
+  final int timeGoal;
+  final bool habitStarted;
 
-  const HabitTile({Key? key, required this.habitName}) : super(key: key);
+  const HabitTile({
+    Key? key,
+    required this.habitName,
+    required this.onTap,
+    required this.settingsTapped,
+    required this.timeSpent,
+    required this.timeGoal,
+    required this.habitStarted,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,20 +40,24 @@ class HabitTile extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                  height: 60,
-                  width: 60,
-                  child: Stack(
-                    children: [
-                      CircularPercentIndicator(
-                        radius: 60,
-                      ),
+                GestureDetector(
+                  onTap: onTap,
+                  child: SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Stack(
+                      children: [
+                        CircularPercentIndicator(
+                          radius: 60,
+                        ),
 
-                      //play pause button
-                      Center(
-                        child: Icon(Icons.play_arrow),
-                      )
-                    ],
+                        //play pause button
+                        Center(
+                          child: Icon(
+                              habitStarted ? Icons.pause : Icons.play_arrow),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -61,15 +80,18 @@ class HabitTile extends StatelessWidget {
                     ),
 
                     //progress
-                    const Text(
-                      '2:00 / 10 = 20%',
+                    Text(
+                      timeSpent.toString() + ' / ' + timeGoal.toString(),
                       style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
               ],
             ),
-            Icon(Icons.settings),
+            GestureDetector(
+              onTap: settingsTapped,
+              child: Icon(Icons.settings),
+            ),
           ],
         ),
       ),
